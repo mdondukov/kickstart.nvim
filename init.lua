@@ -406,13 +406,31 @@ require('lazy').setup({
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          -- Better layout for long paths (especially Java projects)
+          layout_strategy = 'horizontal',
+          layout_config = {
+            horizontal = {
+              preview_width = 0.55,
+              results_width = 0.8,
+            },
+            width = 0.95,
+            height = 0.85,
+          },
+          -- Show file path from bottom up (filename first, then parent dirs)
+          path_display = { 'truncate' }, -- Options: 'truncate', 'smart', 'absolute', 'tail'
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+        },
+        pickers = {
+          find_files = {
+            -- Show hidden files
+            hidden = false,
+            -- Better path display for find_files
+            path_display = { 'smart' }, -- Shows ...parent/dir/file.txt
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -922,6 +940,79 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  { -- Oil.nvim - Edit your filesystem like a buffer
+    'stevearc/oil.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
+      default_file_explorer = true,
+      -- Columns shown in the browser
+      columns = {
+        'icon',
+        -- 'permissions',
+        -- 'size',
+        -- 'mtime',
+      },
+      -- Buffer-local options to use for oil buffers
+      buf_options = {
+        buflisted = false,
+        bufhidden = 'hide',
+      },
+      -- Window-local options to use for oil buffers
+      win_options = {
+        wrap = false,
+        signcolumn = 'no',
+        cursorcolumn = false,
+        foldcolumn = '0',
+        spell = false,
+        list = false,
+        conceallevel = 3,
+        concealcursor = 'nvic',
+      },
+      -- Skip the confirmation popup for simple operations
+      skip_confirm_for_simple_edits = false,
+      -- Deleted files will be removed with the trash_command (below)
+      delete_to_trash = false,
+      -- Keymaps in oil buffer
+      keymaps = {
+        ['g?'] = 'actions.show_help',
+        ['<CR>'] = 'actions.select',
+        ['<C-s>'] = 'actions.select_vsplit',
+        ['<C-h>'] = false, -- disable to not conflict with window navigation
+        ['<C-t>'] = 'actions.select_tab',
+        ['<C-p>'] = 'actions.preview',
+        ['<C-c>'] = 'actions.close',
+        ['<C-l>'] = false, -- disable to not conflict with window navigation
+        ['-'] = 'actions.parent',
+        ['_'] = 'actions.open_cwd',
+        ['`'] = 'actions.cd',
+        ['~'] = 'actions.tcd',
+        ['gs'] = 'actions.change_sort',
+        ['gx'] = 'actions.open_external',
+        ['g.'] = 'actions.toggle_hidden',
+        ['g\\'] = 'actions.toggle_trash',
+      },
+      -- Set to false to disable all of the above keymaps
+      use_default_keymaps = true,
+      view_options = {
+        -- Show files and directories that start with "."
+        show_hidden = false,
+        -- This function defines what is considered a "hidden" file
+        is_hidden_file = function(name, bufnr)
+          return vim.startswith(name, '.')
+        end,
+        -- This function defines what will never be shown, even when `show_hidden` is set
+        is_always_hidden = function(name, bufnr)
+          return false
+        end,
+      },
+    },
+    keys = {
+      { '-', '<cmd>Oil<cr>', desc = 'Open parent directory' },
+      { '<leader>-', '<cmd>Oil --float<cr>', desc = 'Open parent directory in floating window' },
+    },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
