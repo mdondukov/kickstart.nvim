@@ -476,6 +476,11 @@ require('lazy').setup({
     },
   },
   {
+    -- Enhanced Java LSP support with proper Lombok integration
+    'mfussenegger/nvim-jdtls',
+    ft = 'java',
+  },
+  {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -686,7 +691,8 @@ require('lazy').setup({
           },
         },
         rust_analyzer = {},
-        jdtls = {},
+        -- jdtls is configured separately via ftplugin/java.lua
+        -- jdtls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
