@@ -512,6 +512,9 @@ require('lazy').setup({
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
 
+      -- JSON schemas for validation
+      'b0o/schemastore.nvim',
+
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
     },
@@ -719,6 +722,14 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require('schemastore').json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -809,6 +820,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        python = { 'ruff_format', 'ruff_organize_imports' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -876,7 +888,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
