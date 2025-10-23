@@ -93,6 +93,10 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
+-- Disable netrw (we use oil.nvim instead)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -216,6 +220,29 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+-- Open oil.nvim when starting nvim without arguments
+vim.api.nvim_create_autocmd('VimEnter', {
+  desc = 'Open oil.nvim on startup if no file specified',
+  group = vim.api.nvim_create_augroup('oil-startup', { clear = true }),
+  callback = function()
+    if vim.fn.argc() == 0 then
+      vim.cmd 'Oil'
+    end
+  end,
+})
+
+-- Set tab display width for Go files (Go uses real tabs)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  desc = 'Set tab display width for Go files',
+  group = vim.api.nvim_create_augroup('go-tabs', { clear = true }),
+  callback = function()
+    vim.opt_local.tabstop = 4 -- Display tabs as 4 spaces
+    vim.opt_local.shiftwidth = 4 -- Indent width
+    vim.opt_local.list = false -- Disable listchars visualization (too distracting with tabs)
   end,
 })
 
@@ -499,6 +526,47 @@ require('lazy').setup({
     ft = 'java',
   },
   {
+    -- Enhanced Go development plugin
+    'ray-x/go.nvim',
+    dependencies = {
+      'ray-x/guihua.lua', -- UI library for go.nvim
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()',
+    config = function()
+      require('go').setup {
+        -- Disable built-in LSP config since we handle it separately
+        lsp_cfg = false,
+        lsp_gofumpt = true, -- Use gofumpt for formatting
+        lsp_on_attach = nil, -- We handle this in LSP config
+        -- Diagnostic settings
+        diagnostic = {
+          underline = true,
+          virtual_text = { spacing = 4, prefix = '●' },
+          signs = true,
+          update_in_insert = false,
+        },
+        -- Other settings
+        lsp_keymaps = false, -- We use our own keymaps
+        dap_debug = true,
+        dap_debug_keymap = false, -- We'll set our own debug keymaps if needed
+        trouble = false,
+        luasnip = true,
+      }
+    end,
+    keys = {
+      { '<leader>gf', '<cmd>GoFillStruct<cr>', desc = '[G]o [F]ill struct', ft = 'go' },
+      { '<leader>gi', '<cmd>GoIfErr<cr>', desc = '[G]o add [I]f err', ft = 'go' },
+      { '<leader>gt', '<cmd>GoAddTest<cr>', desc = '[G]o add [T]est', ft = 'go' },
+      { '<leader>gT', '<cmd>GoTestFunc<cr>', desc = '[G]o [T]est function', ft = 'go' },
+      { '<leader>ga', '<cmd>GoAlt<cr>', desc = '[G]o [A]lternate (test/impl)', ft = 'go' },
+      { '<leader>gj', '<cmd>GoAddTag json<cr>', desc = '[G]o add [J]son tags', ft = 'go' },
+      { '<leader>gy', '<cmd>GoAddTag yaml<cr>', desc = '[G]o add [Y]aml tags', ft = 'go' },
+    },
+  },
+  {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -714,6 +782,30 @@ require('lazy').setup({
         rust_analyzer = {},
         -- jdtls is configured separately via ftplugin/java.lua
         -- jdtls = {},
+
+        -- Web/markup languages
+        html = {}, -- HTML language server
+        yamlls = { -- YAML language server
+          settings = {
+            yaml = {
+              schemas = {
+                kubernetes = '*.yaml',
+                ['http://json.schemastore.org/github-workflow'] = '.github/workflows/*',
+                ['http://json.schemastore.org/github-action'] = '.github/action.{yml,yaml}',
+                ['http://json.schemastore.org/ansible-stable-2.9'] = 'roles/tasks/*.{yml,yaml}',
+                ['http://json.schemastore.org/prettierrc'] = '.prettierrc.{yml,yaml}',
+                ['http://json.schemastore.org/kustomization'] = 'kustomization.{yml,yaml}',
+                ['http://json.schemastore.org/ansible-playbook'] = '*play*.{yml,yaml}',
+                ['http://json.schemastore.org/chart'] = 'Chart.{yml,yaml}',
+                ['https://json.schemastore.org/dependabot-v2'] = '.github/dependabot.{yml,yaml}',
+                ['https://json.schemastore.org/gitlab-ci'] = '*gitlab-ci*.{yml,yaml}',
+                ['https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json'] = '*api*.{yml,yaml}',
+              },
+            },
+          },
+        },
+        lemminx = {}, -- XML language server
+
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -763,6 +855,14 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'ruff', -- Used to format and lint Python code
+        'goimports', -- Used to organize Go imports
+        'gofumpt', -- Used to format Go code (stricter than gofmt)
+        'google-java-format', -- Used to format Java code
+        'ktlint', -- Used to format Kotlin code
+        -- rustfmt is installed via rustup, not Mason
+        'prettierd', -- Fast formatter for HTML, YAML, JSON, etc.
+        'xmlformatter', -- Used to format XML files
       })
       require('mason-tool-installer').setup {
         ensure_installed = ensure_installed,
@@ -821,6 +921,14 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         python = { 'ruff_format', 'ruff_organize_imports' },
+        go = { 'goimports', 'gofumpt' },
+        java = { 'google-java-format' },
+        kotlin = { 'ktlint' },
+        rust = { 'rustfmt' },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        yaml = { 'prettierd', 'prettier', stop_after_first = true },
+        yml = { 'prettierd', 'prettier', stop_after_first = true },
+        xml = { 'xmlformatter' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -955,6 +1063,7 @@ require('lazy').setup({
 
   { -- Oil.nvim - Edit your filesystem like a buffer
     'stevearc/oil.nvim',
+    lazy = false,
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
@@ -1028,6 +1137,7 @@ require('lazy').setup({
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    event = 'VeryLazy',
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -1039,10 +1149,21 @@ require('lazy').setup({
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
+      -- - saiw" - [S]urround [A]dd [I]nner [W]ord with quotes
+      -- - sd"   - [S]urround [D]elete quotes
+      -- - sr"'  - [S]urround [R]eplace " with '
+      -- - In visual mode: sa" - surround selection with quotes
       require('mini.surround').setup()
+
+      -- Verify surround is working - check with :map sa
+      -- Note: 's' key is remapped by mini.surround and shouldn't enter insert mode
+
+      -- Comment/uncomment code
+      --
+      -- - gcc - toggle comment for current line
+      -- - gc in visual mode - toggle comment for selection
+      -- - gc + motion - toggle comment (e.g., gcap for paragraph)
+      require('mini.comment').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
