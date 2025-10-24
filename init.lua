@@ -805,6 +805,7 @@ require('lazy').setup({
           },
         },
         lemminx = {}, -- XML language server
+        taplo = {}, -- TOML language server
 
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -928,6 +929,7 @@ require('lazy').setup({
         html = { 'prettierd', 'prettier', stop_after_first = true },
         yaml = { 'prettierd', 'prettier', stop_after_first = true },
         yml = { 'prettierd', 'prettier', stop_after_first = true },
+        toml = { 'taplo' },
         xml = { 'xmlformatter' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
