@@ -223,16 +223,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Open oil.nvim when starting nvim without arguments
-vim.api.nvim_create_autocmd('VimEnter', {
-  desc = 'Open oil.nvim on startup if no file specified',
-  group = vim.api.nvim_create_augroup('oil-startup', { clear = true }),
-  callback = function()
-    if vim.fn.argc() == 0 then
-      vim.cmd 'Oil'
-    end
-  end,
-})
+-- NOTE: Auto-opening Oil on startup is disabled to allow persisted.nvim to restore sessions.
+-- Use `-` to open Oil manually, or `nvim .` to start with Oil in current directory.
 
 -- Set tab display width for Go files (Go uses real tabs)
 vim.api.nvim_create_autocmd('FileType', {
