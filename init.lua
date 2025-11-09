@@ -774,6 +774,7 @@ require('lazy').setup({
         rust_analyzer = {},
         -- jdtls is configured separately via ftplugin/java.lua
         -- jdtls = {},
+        kotlin_language_server = {}, -- Kotlin language server
 
         -- Web/markup languages
         html = {}, -- HTML language server
