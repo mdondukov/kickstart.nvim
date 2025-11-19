@@ -190,6 +190,11 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Paste mode toggle (prevents indent issues when pasting)
+vim.keymap.set('n', '<F2>', ':set paste!<CR>', { desc = 'Toggle paste mode' })
+vim.keymap.set('n', '<leader>v', ':set paste<CR>i', { desc = 'Enter paste mode and insert' })
+vim.keymap.set('n', '<leader>V', ':set nopaste<CR>', { desc = 'Exit paste mode' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
