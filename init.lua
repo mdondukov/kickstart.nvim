@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- Disable netrw (we use oil.nvim instead)
 vim.g.loaded_netrw = 1
@@ -189,6 +189,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = 'Show diagnostic in float' })
 
 -- Paste mode toggle (prevents indent issues when pasting)
 vim.keymap.set('n', '<F2>', ':set paste!<CR>', { desc = 'Toggle paste mode' })
@@ -548,13 +549,8 @@ require('lazy').setup({
         lsp_cfg = false,
         lsp_gofumpt = true, -- Use gofumpt for formatting
         lsp_on_attach = nil, -- We handle this in LSP config
-        -- Diagnostic settings
-        diagnostic = {
-          underline = true,
-          virtual_text = { spacing = 4, prefix = '●' },
-          signs = true,
-          update_in_insert = false,
-        },
+        -- Use global diagnostic settings from vim.diagnostic.config
+        diagnostic = false,
         -- Other settings
         lsp_keymaps = false, -- We use our own keymaps
         dap_debug = true,
@@ -741,19 +737,7 @@ require('lazy').setup({
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
-          format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-            }
-            return diagnostic_message[diagnostic.severity]
-          end,
-        },
+        virtual_text = false, -- Use gl to see diagnostics in float
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -1232,7 +1216,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
