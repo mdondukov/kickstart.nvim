@@ -143,7 +143,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = 'yes:1'
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -172,8 +172,20 @@ vim.o.inccommand = 'split'
 -- Show which line your cursor is on
 vim.o.cursorline = true
 
+-- Don't wrap long lines (re-enabled for markdown via ftplugin)
+vim.o.wrap = false
+
+-- Add padding between line numbers and code
+vim.o.statuscolumn = '%s%=%{v:relnum?v:relnum:v:lnum}   '
+
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
+
+-- Smooth scrolling (Neovim 0.10+)
+vim.o.smoothscroll = true
+
+-- Sync rendering with terminal to reduce flicker
+vim.o.termsync = true
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -732,10 +744,10 @@ require('lazy').setup({
         underline = { severity = vim.diagnostic.severity.ERROR },
         signs = vim.g.have_nerd_font and {
           text = {
-            [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
+            [vim.diagnostic.severity.ERROR] = '●',
+            [vim.diagnostic.severity.WARN] = '●',
+            [vim.diagnostic.severity.INFO] = '●',
+            [vim.diagnostic.severity.HINT] = '●',
           },
         } or {},
         virtual_text = false, -- Use gl to see diagnostics in float
@@ -884,7 +896,7 @@ require('lazy').setup({
 
   { -- Autoformat
     'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
+    event = { 'BufWritePost' },
     cmd = { 'ConformInfo' },
     keys = {
       {
@@ -898,16 +910,12 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
+      format_after_save = function(bufnr)
         local disable_filetypes = { c = true, cpp = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
           return {
-            timeout_ms = 500,
             lsp_format = 'fallback',
           }
         end
@@ -1025,7 +1033,7 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
@@ -1050,6 +1058,9 @@ require('lazy').setup({
 
       -- Load the colorscheme here.
       vim.cmd.colorscheme 'github_dark_default'
+
+      -- Subtle cursorline highlight
+      vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#1a2029' })
     end,
   },
 
@@ -1205,6 +1216,7 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
+
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1215,11 +1227,11 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
