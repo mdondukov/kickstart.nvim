@@ -176,7 +176,7 @@ vim.o.cursorline = true
 vim.o.wrap = false
 
 -- Add padding between line numbers and code
-vim.o.statuscolumn = '%s%=%{v:relnum?v:relnum:v:lnum}   '
+vim.o.statuscolumn = ' %s%=%{v:relnum?v:relnum:v:lnum}   '
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
