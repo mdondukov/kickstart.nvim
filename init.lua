@@ -203,10 +203,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = 'Show diagnostic in float' })
 
--- Paste mode toggle (prevents indent issues when pasting)
-vim.keymap.set('n', '<F2>', ':set paste!<CR>', { desc = 'Toggle paste mode' })
-vim.keymap.set('n', '<leader>v', ':set paste<CR>i', { desc = 'Enter paste mode and insert' })
-vim.keymap.set('n', '<leader>V', ':set nopaste<CR>', { desc = 'Exit paste mode' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -393,8 +389,12 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch' },
+        { '<leader>S', group = '[S]ession' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]o lang' },
+        { '<leader>r', group = '[R]efactor' },
+        { '<leader>u', group = '[U]tilities' },
       },
     },
   },

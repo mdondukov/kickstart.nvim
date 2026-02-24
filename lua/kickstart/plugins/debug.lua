@@ -41,7 +41,7 @@ return {
       desc = 'Debug: Step Into',
     },
     {
-      '<F2>',
+      '<F8>',
       function()
         require('dap').step_over()
       end,

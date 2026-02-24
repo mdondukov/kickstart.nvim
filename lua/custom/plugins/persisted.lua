@@ -38,6 +38,20 @@ return {
         end,
       }
 
+      -- Close special buffers before saving session (diff views, terminals, etc.)
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'PersistedSavePre',
+        callback = function()
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            local name = vim.api.nvim_buf_get_name(buf)
+            local bt = vim.bo[buf].buftype
+            if bt == 'nofile' or name:match '://' or name:match '%.git/' then
+              vim.api.nvim_buf_delete(buf, { force = true })
+            end
+          end
+        end,
+      })
+
       -- Telescope integration (load after telescope is ready)
       vim.schedule(function()
         pcall(require('telescope').load_extension, 'persisted')
@@ -45,11 +59,10 @@ return {
     end,
     keys = {
       -- Telescope integration for session management
-      { '<leader>ss', '<cmd>Telescope persisted<cr>', desc = '[S]earch [S]essions' },
-      -- Additional session commands
-      { '<leader>sS', '<cmd>SessionSave<cr>', desc = '[S]ession [S]ave' },
-      { '<leader>sL', '<cmd>SessionLoad<cr>', desc = '[S]ession [L]oad' },
-      { '<leader>sD', '<cmd>SessionDelete<cr>', desc = '[S]ession [D]elete' },
+      { '<leader>Ss', '<cmd>Telescope persisted<cr>', desc = '[S]ession [s]earch' },
+      { '<leader>SS', '<cmd>SessionSave<cr>', desc = '[S]ession [S]ave' },
+      { '<leader>Sl', '<cmd>SessionLoad<cr>', desc = '[S]ession [l]oad' },
+      { '<leader>Sd', '<cmd>SessionDelete<cr>', desc = '[S]ession [d]elete' },
     },
   },
 }

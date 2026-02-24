@@ -1,10 +1,17 @@
 -- Java LSP configuration with Lombok support
+
+-- Skip special buffers (e.g. gitsigns diff views, fugitive, restored from session)
+local bufname = vim.api.nvim_buf_get_name(0)
+if bufname == '' or bufname:match '://' or bufname:match '%.git/' then
+  return
+end
+
 local jdtls = require 'jdtls'
 
 -- Find root of project
 local root_markers = { '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle' }
 local root_dir = require('jdtls.setup').find_root(root_markers)
-if root_dir == '' then
+if not root_dir or root_dir == '' then
   return
 end
 
@@ -99,12 +106,12 @@ local config = {
           for _, name in ipairs(project_formatters) do
             local path = root_dir .. '/' .. name
             if vim.fn.filereadable(path) == 1 then
-              return { url = path }
+              return { url = vim.uri_from_fname(path) }
             end
           end
           -- Default: IntelliJ-like Eclipse formatter
           return {
-            url = vim.fn.stdpath 'config' .. '/lang-servers/eclipse-java-formatter.xml',
+            url = vim.uri_from_fname(vim.fn.stdpath 'config' .. '/lang-servers/eclipse-java-formatter.xml'),
             profile = 'IntelliJLike',
           }
         end)(),
