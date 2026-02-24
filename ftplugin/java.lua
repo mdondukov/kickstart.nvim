@@ -88,10 +88,26 @@ local config = {
       signatureHelp = { enabled = true },
       format = {
         enabled = true,
-        settings = {
-          url = vim.fn.stdpath 'config' .. '/lang-servers/intellij-java-google-style.xml',
-          profile = 'GoogleStyle',
-        },
+        onType = { enabled = true },
+        settings = (function()
+          -- Look for project-local formatter first, fall back to default
+          local project_formatters = {
+            'eclipse-formatter.xml',
+            '.eclipse-formatter.xml',
+            'formatter.xml',
+          }
+          for _, name in ipairs(project_formatters) do
+            local path = root_dir .. '/' .. name
+            if vim.fn.filereadable(path) == 1 then
+              return { url = path }
+            end
+          end
+          -- Default: IntelliJ-like Eclipse formatter
+          return {
+            url = vim.fn.stdpath 'config' .. '/lang-servers/eclipse-java-formatter.xml',
+            profile = 'IntelliJLike',
+          }
+        end)(),
       },
       contentProvider = { preferred = 'fernflower' },
       -- Improve completion and refactoring

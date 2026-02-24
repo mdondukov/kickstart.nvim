@@ -547,6 +547,11 @@ require('lazy').setup({
     ft = 'java',
   },
   {
+    -- LSP on-type formatting (fixes Java indentation on Enter/;/})
+    'yioneko/nvim-type-fmt',
+    ft = 'java',
+  },
+  {
     -- Enhanced Go development plugin
     'ray-x/go.nvim',
     dependencies = {
@@ -924,7 +929,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         python = { 'ruff_format', 'ruff_organize_imports' },
         go = { 'goimports', 'gofumpt' },
-        java = { 'google-java-format' },
+        java = { lsp_format = 'prefer' },
         kotlin = { 'ktlint' },
         rust = { 'rustfmt' },
         html = { 'prettierd', 'prettier', stop_after_first = true },
@@ -1206,7 +1211,7 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      indent = { enable = true, disable = { 'ruby', 'java' } },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
