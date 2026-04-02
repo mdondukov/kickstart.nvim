@@ -37,9 +37,6 @@ elseif vim.fn.has 'win32' == 1 then
   os_config = 'config_win'
 end
 
--- Get capabilities from blink.cmp
-local capabilities = require('blink.cmp').get_lsp_capabilities()
-
 -- Main jdtls config
 local config = {
   cmd = {
@@ -64,7 +61,6 @@ local config = {
     workspace_dir,
   },
   root_dir = root_dir,
-  capabilities = capabilities,
   settings = {
     java = {
       eclipse = {
