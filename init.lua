@@ -471,6 +471,18 @@ require('lazy').setup({
         vim.lsp.config(name, config)
         vim.lsp.enable(name)
       end
+
+      -- GitHub Copilot via native LSP + inline completion (Neovim 0.12)
+      vim.lsp.config('copilot', {
+        cmd = { 'copilot-language-server', '--stdio' },
+        root_markers = { '.git' },
+        init_options = {
+          editorInfo = { name = 'Neovim', version = tostring(vim.version()) },
+          editorPluginInfo = { name = 'Neovim', version = tostring(vim.version()) },
+        },
+      })
+      vim.lsp.enable('copilot')
+
     end,
   },
 
@@ -533,6 +545,7 @@ require('lazy').setup({
         opts = {},
       },
       'folke/lazydev.nvim',
+      'fang2hou/blink-copilot',
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
@@ -540,13 +553,15 @@ require('lazy').setup({
       keymap = { preset = 'super-tab' },
       appearance = { nerd_font_variant = 'mono' },
       completion = {
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 200 },
+        ghost_text = { enabled = false },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          copilot = { module = 'blink-copilot', score_offset = 80, async = true },
         },
       },
 
