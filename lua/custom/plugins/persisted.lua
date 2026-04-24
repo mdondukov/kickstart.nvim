@@ -58,11 +58,12 @@ return {
       end)
     end,
     keys = {
-      -- Telescope integration for session management
       { '<leader>Ss', '<cmd>Telescope persisted<cr>', desc = '[S]ession [s]earch' },
-      { '<leader>SS', '<cmd>SessionSave<cr>', desc = '[S]ession [S]ave' },
-      { '<leader>Sl', '<cmd>SessionLoad<cr>', desc = '[S]ession [l]oad' },
-      { '<leader>Sd', '<cmd>SessionDelete<cr>', desc = '[S]ession [d]elete' },
+      { '<leader>SS', '<cmd>Persisted save<cr>', desc = '[S]ession [S]ave' },
+      { '<leader>Sl', '<cmd>Persisted load<cr>', desc = '[S]ession [l]oad' },
+      { '<leader>SL', '<cmd>Persisted load_last<cr>', desc = '[S]ession [L]oad last' },
+      { '<leader>Sd', '<cmd>Persisted delete_current<cr>', desc = '[S]ession [d]elete current' },
+      { '<leader>SD', '<cmd>Persisted delete<cr>', desc = '[S]ession [D]elete (pick)' },
     },
   },
 }

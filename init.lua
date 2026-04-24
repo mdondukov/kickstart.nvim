@@ -402,7 +402,13 @@ require('lazy').setup({
         },
         rust_analyzer = {},
         -- jdtls configured separately via ftplugin/java.lua
-        kotlin_language_server = {},
+        kotlin_language_server = {
+          -- fwcd/kotlin-language-server 1.3.13 падает в documentHighlight
+          -- с KotlinFrontEndException -> -32603 Internal error на Spring/Kotlin 1.9 проектах.
+          on_init = function(client)
+            client.server_capabilities.documentHighlightProvider = false
+          end,
+        },
         html = {},
         yamlls = {
           settings = {
