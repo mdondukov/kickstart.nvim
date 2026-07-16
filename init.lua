@@ -401,6 +401,8 @@ require('lazy').setup({
           },
         },
         rust_analyzer = {},
+        ts_ls = {},
+        eslint = {},
         -- jdtls configured separately via ftplugin/java.lua
         kotlin_language_server = {
           -- fwcd/kotlin-language-server 1.3.13 падает в documentHighlight
@@ -525,6 +527,10 @@ require('lazy').setup({
         java = { lsp_format = 'prefer' },
         kotlin = { 'ktlint' },
         rust = { 'rustfmt' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         html = { 'prettierd', 'prettier', stop_after_first = true },
         yaml = { 'prettierd', 'prettier', stop_after_first = true },
         yml = { 'prettierd', 'prettier', stop_after_first = true },
