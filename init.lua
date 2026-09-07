@@ -358,8 +358,9 @@ require('lazy').setup({
             })
           end
 
-          -- Toggle inlay hints keymap
+          -- Inlay hints: enable by default, toggle with <leader>th
           if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+            vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -384,6 +385,15 @@ require('lazy').setup({
         virtual_text = false, -- Use gl to see diagnostics in float
       }
 
+      -- ts_ls: variable/return types, parameter names only for literal args
+      local ts_inlay_hints = {
+        includeInlayVariableTypeHints = true,
+        includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayParameterNameHints = 'literals',
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+      }
+
       -- LSP server configurations
       ---@type table<string, vim.lsp.Config>
       local servers = {
@@ -401,7 +411,12 @@ require('lazy').setup({
           },
         },
         rust_analyzer = {},
-        ts_ls = {},
+        ts_ls = {
+          settings = {
+            typescript = { inlayHints = ts_inlay_hints },
+            javascript = { inlayHints = ts_inlay_hints },
+          },
+        },
         eslint = {},
         -- jdtls configured separately via ftplugin/java.lua
         kotlin_language_server = {
