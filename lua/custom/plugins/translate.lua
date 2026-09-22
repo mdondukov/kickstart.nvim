@@ -45,7 +45,8 @@ return {
       },
       preset = {
         output = {
-          floating = { border = 'rounded' },
+          -- zindex above LSP hover (50) so the translation shows on top of it
+          floating = { border = 'rounded', zindex = 100 },
         },
       },
     },
