@@ -13,6 +13,9 @@ return {
         vim.o.background = mode
         vim.cmd.colorscheme('github_' .. mode .. '_default')
         vim.api.nvim_set_hl(0, 'CursorLine', { bg = mode == 'dark' and '#1a2029' or '#f6f8fa' })
+        -- Same recipe blink.cmp uses for its borders: border cells share the float
+        -- background, so there is no gap between the border line and the body.
+        vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'NormalFloat' })
       end
 
       require('auto-dark-mode').setup {
