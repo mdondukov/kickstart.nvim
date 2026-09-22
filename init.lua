@@ -59,6 +59,9 @@ vim.o.termsync = true
 -- Border for native completion popup menu (Neovim 0.12+)
 vim.o.pumborder = 'rounded'
 
+-- Border for floating windows that don't set their own (LSP hover, signature help)
+vim.o.winborder = 'rounded'
+
 vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
