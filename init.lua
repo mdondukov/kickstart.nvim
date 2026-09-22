@@ -176,6 +176,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>S', group = '[S]ession' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>T', group = '[T]ranslate', mode = { 'n', 'x' } },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]o lang' },
         { '<leader>r', group = '[R]efactor' },
