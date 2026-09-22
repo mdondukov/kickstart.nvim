@@ -16,6 +16,11 @@ return {
         -- Same recipe blink.cmp uses for its borders: border cells share the float
         -- background, so there is no gap between the border line and the body.
         vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'NormalFloat' })
+        -- Telescope is a set of floats too: use the float background for its
+        -- panels (border/title/prompt inherit from TelescopeNormal), and give
+        -- the selected row its own color so it does not blend into that bg.
+        vim.api.nvim_set_hl(0, 'TelescopeNormal', { link = 'NormalFloat' })
+        vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = mode == 'dark' and '#17335a' or '#dae9f9' })
       end
 
       require('auto-dark-mode').setup {
