@@ -610,8 +610,9 @@ require('lazy').setup({
         },
       }
 
+      -- Initial colorscheme; auto-dark-mode.nvim (custom/plugins/auto_dark_mode.lua)
+      -- switches between dark/light variants and sets CursorLine per mode.
       vim.cmd.colorscheme 'github_dark_default'
-      vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#1a2029' })
     end,
   },
 
